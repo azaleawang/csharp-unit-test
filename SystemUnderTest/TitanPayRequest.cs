@@ -31,26 +31,38 @@ namespace SystemUnderTest
             var beforeHash = $"{MerchantCode}{Amount:n0}{merchantKey}";
 
             Signature = new Md5Helper().Hash(beforeHash);
+
         }
 
         public void Sign2()
         {
-            var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Data\key.txt");
-            var merchantKey = File.ReadLines(path).First();
+            var merchantKey = GetMerchantKey();
             var beforeHash = $"{MerchantCode}{Amount:n0}{merchantKey}";
 
             Signature = new Md5Helper().Hash(beforeHash);
         }
 
+        protected virtual string GetMerchantKey()
+        {
+            var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Data\key.txt");
+            var merchantKey = File.ReadLines(path).First();
+            return merchantKey;
+        }
+
 
         public void Sign3()
         {
-            CreatedOn = DateTime.Now;
+            CreatedOn = GetCreatedTime();
 
             const string merchantKey = "asdf1234";
             var beforeHash = $"{MerchantCode}{Amount:n0}{merchantKey}{CreatedOn:yyyy-MM-ddTHH:mm:ss}";
 
             Signature = new Md5Helper().Hash(beforeHash);
+        }
+
+        protected virtual DateTime GetCreatedTime()
+        {
+            return DateTime.Now;
         }
     }
 }
