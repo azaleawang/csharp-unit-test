@@ -54,7 +54,7 @@ namespace UnitTestCourse
                 Amount = 999,
                 MerchantKey = "asdf1234"
             };
-            var actual = linePayRequest.MerchantKey;
+            
             linePayRequest.Sign2();
 
             Assert.AreEqual("137bdcd797c899a19e8b6abf5a81a901", linePayRequest.Signature);
@@ -70,11 +70,10 @@ namespace UnitTestCourse
                 Amount = 999,
                 DateTime = Convert.ToDateTime("2010-03-01T06:04:11")
             };
-            
-            var expected = "d0ce6e9ee457fae7b49c27e6ca6ced79";
+
             payHelper.Sign3();
 
-            Assert.AreEqual(expected, payHelper.Signature);
+            Assert.AreEqual("d0ce6e9ee457fae7b49c27e6ca6ced79", payHelper.Signature);
         }
     }
 }
