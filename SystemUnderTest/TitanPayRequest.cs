@@ -16,12 +16,52 @@ namespace SystemUnderTest
      * md5: https://www.md5hashgenerator.com/
      */
 
+    public interface IMerchantKey
+    {
+        string Get();
+    }
+
+    // then extract to Interface
+    public class MerchantKey : IMerchantKey
+    {
+        public string Get()
+        {
+            var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty, @"Data\key.txt");
+            var merchantKey = File.ReadLines(path).First();
+            return merchantKey;
+        }
+    }
+
+    public interface IDatetimeProvider
+    {
+        DateTime Get();
+    }
+
+    public class DatetimeProvider : IDatetimeProvider
+    {
+        public DateTime Get()
+        {
+            return DateTime.Now;
+        }
+    }
+
     public class TitanPayRequest
     {
+        private readonly IDatetimeProvider _datetimeProvider; // use base type (change to interface) and add to constructor
+        private readonly IMerchantKey _merchantKey;
         private string MerchantCode => "pchome";
         public int Amount { get; set; }
         public string Signature { get; private set; }
         public DateTime CreatedOn { get; private set; }
+
+        public TitanPayRequest(int amount, string signature, DateTime createdOn, IMerchantKey merchantKey, IDatetimeProvider datetimeProvider)
+        {
+            Amount = amount;
+            Signature = signature;
+            CreatedOn = createdOn;
+            _merchantKey = merchantKey;
+            _datetimeProvider = datetimeProvider;
+        }
 
         public void Sign()
         {
@@ -33,17 +73,20 @@ namespace SystemUnderTest
 
         public void Sign2()
         {
-            var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty, @"Data\key.txt");
-            var merchantKey = File.ReadLines(path).First();
+            // no interface so think about abstraction
+            var merchantKey = _merchantKey.Get();
             var beforeHash = $"{MerchantCode}{Amount:n0}{merchantKey}";
 
             Signature = new Md5Helper().Hash(beforeHash);
         }
 
+        // extract to public
+
 
         public void Sign3()
         {
-            CreatedOn = DateTime.Now;
+            // extract this
+            CreatedOn = _datetimeProvider.Get(); 
 
             const string merchantKey = "asdf1234";
             var beforeHash = $"{MerchantCode}{Amount:n0}{merchantKey}{CreatedOn:yyyy-MM-ddTHH:mm:ss}";
