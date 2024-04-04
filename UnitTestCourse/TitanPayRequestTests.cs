@@ -25,7 +25,7 @@ namespace UnitTestCourse
 
         // 3. write tests for TitanPayRequest.Sign()
         [Test]
-        public void Sign_WithValidAmount_ShouldGenerateCorrectSignature()
+        public void Sign_WithValidInputs_ShouldGenerateCorrectSignature()
         {
             _titanPayRequest.Sign();
             const string expectedSignature = "fd98262a120ec2f1c7612f7fa0a5cb29";
@@ -45,7 +45,7 @@ namespace UnitTestCourse
 
         // 4. write unit test for Sign2
         [Test]
-        public void calculate_signature_with_key_from_file()
+        public void Sign2_WithKeyFromFile_ShouldGenerateCorrectSignature()
         {
             GivenMerchantKey("asdf1234");
             _titanPayRequest.Sign2();
@@ -54,7 +54,7 @@ namespace UnitTestCourse
 
         // 5. write unit test for Sign3
         [Test]
-        public void calculate_signature_with_created_on()
+        public void Sign3_WithCustomCreatedOn_ShouldGenerateCorrectSignature()
         {
             _createdOn = new DateTime(2024, 11, 11, 11, 11, 11);
             GivenCreatedOn(_createdOn);
