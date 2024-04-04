@@ -16,13 +16,13 @@ namespace SystemUnderTest
      * md5: https://www.md5hashgenerator.com/
      */
 
-    public interface IMerchantKey
+    public interface IMerchantKeyProvider
     {
         string Get();
     }
 
     // then extract to Interface
-    public class MerchantKey : IMerchantKey
+    public class MerchantKeyProvider : IMerchantKeyProvider
     {
         public string Get()
         {
@@ -48,18 +48,18 @@ namespace SystemUnderTest
     public class TitanPayRequest
     {
         private readonly IDatetimeProvider _datetimeProvider; // use base type (change to interface) and add to constructor
-        private readonly IMerchantKey _merchantKey;
+        private readonly IMerchantKeyProvider _merchantKeyProvider;
         private string MerchantCode => "pchome";
         public int Amount { get; set; }
         public string Signature { get; private set; }
         public DateTime CreatedOn { get; private set; }
 
-        public TitanPayRequest(int amount, string signature, DateTime createdOn, IMerchantKey merchantKey, IDatetimeProvider datetimeProvider)
+        public TitanPayRequest(int amount, string signature, DateTime createdOn, IMerchantKeyProvider merchantKeyProvider, IDatetimeProvider datetimeProvider)
         {
             Amount = amount;
             Signature = signature;
             CreatedOn = createdOn;
-            _merchantKey = merchantKey;
+            _merchantKeyProvider = merchantKeyProvider;
             _datetimeProvider = datetimeProvider;
         }
 
@@ -74,7 +74,7 @@ namespace SystemUnderTest
         public void Sign2()
         {
             // no interface so think about abstraction
-            var merchantKey = _merchantKey.Get();
+            var merchantKey = _merchantKeyProvider.Get();
             var beforeHash = $"{MerchantCode}{Amount:n0}{merchantKey}";
 
             Signature = new Md5Helper().Hash(beforeHash);
@@ -86,7 +86,7 @@ namespace SystemUnderTest
         public void Sign3()
         {
             // extract this
-            CreatedOn = _datetimeProvider.Get(); 
+            CreatedOn = _datetimeProvider.Get();
 
             const string merchantKey = "asdf1234";
             var beforeHash = $"{MerchantCode}{Amount:n0}{merchantKey}{CreatedOn:yyyy-MM-ddTHH:mm:ss}";
