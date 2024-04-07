@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 using SystemUnderTest;
 
 namespace UnitTestCourse
@@ -8,12 +9,18 @@ namespace UnitTestCourse
     {
         private class FakeTitanPayRequest : TitanPayRequest
         {
+            public DateTime FixedDateTime { get; set; }
             private const string _merchantKey = "asdf1234";
-
             public override string GetMerchantKey()
             {
                 return _merchantKey;
             }
+
+            protected override DateTime GetCurrentDateTime()
+            {
+                return FixedDateTime;
+            }
+
         }
         
         // 3. write tests for TitanPayRequest.Sign()
@@ -52,9 +59,18 @@ namespace UnitTestCourse
 
         // 5. write unit test for Sign3
         [Test]
-        public void calculate_signature_with_created_on()
+        public void Sign3_WithValidCreatedOnShouldGenerateCorrectSignature()
         {
+            var fakeTitanPayRequest = new FakeTitanPayRequest()
+            {
+                Amount = 100,
+                FixedDateTime = new DateTime(2023, 11, 11, 11, 11, 11)
+            };
             
+            fakeTitanPayRequest.Sign3();
+            const string expected = "82363f06b5f4b652d81b37cc28562fce";
+            ShouldGenerateCorrectSignature(expected, fakeTitanPayRequest.Signature);
+
         }
     }
 }

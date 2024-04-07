@@ -48,12 +48,16 @@ namespace SystemUnderTest
 
         public void Sign3()
         {
-            CreatedOn = DateTime.Now;
-
+            CreatedOn = GetCurrentDateTime();
             const string merchantKey = "asdf1234";
             var beforeHash = $"{MerchantCode}{Amount:n0}{merchantKey}{CreatedOn:yyyy-MM-ddTHH:mm:ss}";
 
             Signature = new Md5Helper().Hash(beforeHash);
+        }
+
+        protected virtual DateTime GetCurrentDateTime()
+        {
+            return DateTime.Now;
         }
     }
 }
