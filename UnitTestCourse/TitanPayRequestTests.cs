@@ -10,7 +10,17 @@ namespace UnitTestCourse
         private class FakeTitanPayRequest : TitanPayRequest
         {
             public DateTime FixedDateTime { get; set; }
-            private const string _merchantKey = "asdf1234";
+            private readonly string _merchantKey;
+
+            public FakeTitanPayRequest()
+            {
+            }
+
+            public FakeTitanPayRequest(string merchantKey)
+            {
+                _merchantKey = merchantKey;
+            }
+            
             public override string GetMerchantKey()
             {
                 return _merchantKey;
@@ -48,7 +58,8 @@ namespace UnitTestCourse
         [Test]
         public void Sign2_WithValidMerchantKey_ShouldGenerateCorrectSignature()
         {
-            var fakeTitanPayRequest = new FakeTitanPayRequest()
+            const string merchantKey = "asdf1234";
+            var fakeTitanPayRequest = new FakeTitanPayRequest(merchantKey)
             {
                 Amount = 100
             };
@@ -59,7 +70,7 @@ namespace UnitTestCourse
 
         // 5. write unit test for Sign3
         [Test]
-        public void Sign3_WithValidCreatedOnShouldGenerateCorrectSignature()
+        public void Sign3_WithValidCreatedOn_ShouldGenerateCorrectSignature()
         {
             var fakeTitanPayRequest = new FakeTitanPayRequest()
             {
