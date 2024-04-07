@@ -6,6 +6,16 @@ namespace UnitTestCourse
     [TestFixture]
     public class TitanPayRequestTests
     {
+        private class FakeTitanPayRequest : TitanPayRequest
+        {
+            private const string _merchantKey = "asdf1234";
+
+            public override string GetMerchantKey()
+            {
+                return _merchantKey;
+            }
+        }
+        
         // 3. write tests for TitanPayRequest.Sign()
         [Test]
         public void Sign_WithValidAmount_ShouldGenerateCorrectSignature()
@@ -29,15 +39,22 @@ namespace UnitTestCourse
 
         // 4. write unit test for Sign2
         [Test]
-        public void calculate_signature_with_key_from_file()
+        public void Sign2_WithValidMerchantKey_ShouldGenerateCorrectSignature()
         {
-           
+            var fakeTitanPayRequest = new FakeTitanPayRequest()
+            {
+                Amount = 100
+            };
+            fakeTitanPayRequest.Sign2();
+            const string expected = "fd98262a120ec2f1c7612f7fa0a5cb29";
+            ShouldGenerateCorrectSignature(expected, fakeTitanPayRequest.Signature);
         }
 
         // 5. write unit test for Sign3
         [Test]
         public void calculate_signature_with_created_on()
         {
+            
         }
     }
 }

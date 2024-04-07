@@ -33,13 +33,18 @@ namespace SystemUnderTest
 
         public void Sign2()
         {
-            var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty, @"Data\key.txt");
-            var merchantKey = File.ReadLines(path).First();
+            var merchantKey = GetMerchantKey();
             var beforeHash = $"{MerchantCode}{Amount:n0}{merchantKey}";
 
             Signature = new Md5Helper().Hash(beforeHash);
         }
 
+        public virtual string GetMerchantKey()
+        {
+            var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty, @"Data\key.txt");
+            var merchantKey = File.ReadLines(path).First();
+            return merchantKey;
+        }
 
         public void Sign3()
         {
