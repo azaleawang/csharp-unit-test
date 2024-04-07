@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using SystemUnderTest;
 
 namespace UnitTestCourse
 {
@@ -7,8 +8,23 @@ namespace UnitTestCourse
     {
         // 3. write tests for TitanPayRequest.Sign()
         [Test]
-        public void name_your_unit_test()
+        public void Sign_WithValidAmount_ShouldGenerateCorrectSignature()
         {
+            var titanPayRequest = new TitanPayRequest()
+            {
+                Amount = 100
+            };
+            
+            titanPayRequest.Sign();
+            const string expected = "fd98262a120ec2f1c7612f7fa0a5cb29";
+
+            var actual = titanPayRequest.Signature;
+            ShouldGenerateCorrectSignature(expected, actual);
+        }
+
+        private static void ShouldGenerateCorrectSignature(string expected, string actual)
+        {
+            Assert.AreEqual(expected, actual);
         }
 
         // 4. write unit test for Sign2
